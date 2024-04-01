@@ -68,7 +68,7 @@ Fixed::Fixed(const float value)
 			result |= 1 << i++;
 		if (do_roundup)
 		{
-			result += isnegative ? -1 : 1;
+			isnegative ? result-- : result++;
 			result &= -1u >> 1;
 		}
 	}
