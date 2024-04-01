@@ -11,29 +11,18 @@
 /* ************************************************************************** */
 
 #include "Fixed.hpp"
-#include <iostream>
 
-Fixed::Fixed(void) : _raw(0)
-{
-	std::cout << "Default constructor called" << std::endl;
-}
+Fixed::Fixed(void) : _raw(0) {}
 
-Fixed::Fixed(const Fixed &value)
-{
-	std::cout << "Copy constructor called" << std::endl;
-	*this = value;
-}
+Fixed::Fixed(const Fixed &value) : _raw(value._raw) {}
 
 Fixed::Fixed(const int value)
 {
-	std::cout << "Int constructor called" << std::endl;
 	_raw = value << _fixed_point;
 }
 
 Fixed::Fixed(const float value)
 {
-	std::cout << "Float constructor called" << std::endl;
-
 	int result;
 	unsigned int temp;
 	bool isnegative;
@@ -77,27 +66,21 @@ Fixed::Fixed(const float value)
 	_raw = result;
 }
 
-Fixed::~Fixed()
-{
-	std::cout << "Destructor called" << std::endl;
-}
+Fixed::~Fixed() {}
 
 Fixed &Fixed::operator=(const Fixed &value)
 {
-	std::cout << "Copy assignment operator called" << std::endl;
 	_raw = value._raw;
 	return *this;
 }
 
 int Fixed::getRawBits(void) const
 {
-	std::cout << "getRawBits member function called" << std::endl;
 	return _raw;
 }
 
 void Fixed::setRawBFits(int const raw)
 {
-	std::cout << "setRawBFits member function called" << std::endl;
 	_raw = raw;
 }
 
@@ -140,4 +123,112 @@ float Fixed::toFloat(void) const
 std::ostream &operator<<(std::ostream &out, const Fixed &value)
 {
 	return out << value.toFloat();
+}
+
+bool Fixed::operator>(const Fixed &other) const
+{
+	return _raw > other._raw;
+}
+
+bool Fixed::operator<(const Fixed &other) const
+{
+	return _raw < other._raw;
+}
+
+bool Fixed::operator>=(const Fixed &other) const
+{
+	return _raw >= other._raw;
+}
+
+bool Fixed::operator<=(const Fixed &other) const
+{
+	return _raw <= other._raw;
+}
+
+bool Fixed::operator==(const Fixed &other) const
+{
+	return _raw == other._raw;
+}
+
+bool Fixed::operator!=(const Fixed &other) const
+{
+	return _raw != other._raw;
+}
+
+Fixed Fixed::operator+(const Fixed &other) const
+{
+	Fixed temp;
+
+	temp.setRawBFits(_raw + other._raw);
+	return temp;
+}
+
+Fixed Fixed::operator-(const Fixed &other) const
+{
+	Fixed temp;
+
+	temp.setRawBFits(_raw - other._raw);
+	return temp;
+}
+
+Fixed Fixed::operator*(const Fixed &other) const
+{
+	Fixed temp;
+
+	temp.setRawBFits((_raw * other._raw) / (1 << _fixed_point));
+	return temp;
+}
+
+Fixed Fixed::operator/(const Fixed &other) const
+{
+	Fixed temp;
+
+	temp.setRawBFits((_raw / other._raw) * (1 << _fixed_point));
+	return temp;
+}
+
+Fixed &Fixed::operator++(void)
+{
+	_raw++;
+	return *this;
+}
+
+Fixed Fixed::operator++(int)
+{
+	Fixed temp = *this;
+	_raw++;
+	return temp;
+}
+
+Fixed &Fixed::operator--(void)
+{
+	_raw--;
+	return *this;
+}
+
+Fixed Fixed::operator--(int)
+{
+	Fixed temp = *this;
+	_raw--;
+	return temp;
+}
+
+const Fixed &Fixed::max(const Fixed &a, const Fixed &b)
+{
+	return a < b ? b : a;
+}
+
+Fixed &Fixed::max(Fixed &a, Fixed &b)
+{
+	return a < b ? b : a;
+}
+
+const Fixed &Fixed::min(const Fixed &a, const Fixed &b)
+{
+	return a > b ? b : a;
+}
+
+Fixed &Fixed::min(Fixed &a, Fixed &b)
+{
+	return a > b ? b : a;
 }
