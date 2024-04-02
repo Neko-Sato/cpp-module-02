@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 07:27:57 by hshimizu          #+#    #+#             */
-/*   Updated: 2024/04/02 00:12:40 by hshimizu         ###   ########.fr       */
+/*   Updated: 2024/04/03 06:07:20 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ public:
 	~Fixed();
 
 	Fixed &operator=(const Fixed &value);
-	friend std::ostream &operator<<(std::ostream &out, const Fixed &value);
 
 	int getRawBits(void) const;
 	void setRawBFits(int const raw);
@@ -38,5 +37,7 @@ public:
 	int toInt(void) const;
 	float toFloat(void) const;
 };
+
+std::ostream &operator<<(std::ostream &out, const Fixed &value);
 
 #endif
