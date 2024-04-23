@@ -34,16 +34,11 @@ Fixed::Fixed(const float value)
 {
 	std::cout << "Float constructor called" << std::endl;
 
-	int result;
-	unsigned int temp;
-	bool isnegative;
-	int exp;
-
-	result = 0;
-	temp = *(unsigned int *)&value;
-	isnegative = !!(temp & (1 << 31));
-	exp = temp >> 23 & 0xFF;
-	if (exp == 0x0 && !(temp & ~(-1u << 22)))
+	const unsigned int &temp = reinterpret_cast<const unsigned int &>(value);
+	int result = 0;
+	bool isnegative = value < 0;
+	int exp = temp >> 23 & 0xFF;
+	if (exp == 0x0 && !(temp & ((1 << 22) - 1)))
 	{
 		_raw = 0;
 		return;
@@ -51,29 +46,22 @@ Fixed::Fixed(const float value)
 	else if (exp == 0xFF)
 		throw std::runtime_error("Fixed initialize error");
 	{
-		bool do_roundup;
-		size_t i, j;
-
-		do_roundup = false;
-		i = j = 0;
+		bool do_roundup = false;
+		size_t i = 0, j = 0;
 		if (exp - 0x7F - 23 < -_fixed_point)
 		{
 			j = -_fixed_point - (exp - 0x7F - 23);
-			if (j && (temp >> (j - 1) & 1))
-				do_roundup = true;
+			do_roundup = temp >> (j - 1) & 1;
 		}
 		for (; i < 32 - 1 && j < 23; i++, j++)
 			result |= (temp >> j & 1) << i;
 		if (i < 32 - 1)
-			result |= 1 << i++;
+			result |= 1 << i;
 		if (do_roundup)
-		{
 			isnegative ? result-- : result++;
-			result &= -1u >> 1;
-		}
 	}
 	if (isnegative)
-		result = ~(unsigned int)result + 1;
+		result = -result;
 	_raw = result;
 }
 
@@ -103,38 +91,30 @@ void Fixed::setRawBFits(int const raw)
 
 int Fixed::toInt(void) const
 {
-	return (_raw >> _fixed_point) + (_raw & (1u << 31) ? (_raw & (~(-1u << _fixed_point)) ? 1 : 0) : 0);
+	return (_raw >> _fixed_point) + (_raw < 0 && _raw & ((1 << _fixed_point) - 1) ? 1 : 0);
 }
 
 float Fixed::toFloat(void) const
 {
-	unsigned int temp;
-	bool isnegative;
-	int exp;
-
 	if (!_raw)
 		return 0;
-	*(int *)&temp = _raw;
-	isnegative = !!(temp & (1 << 31));
+	int temp = _raw;
+	bool isnegative = temp < 0;
 	if (isnegative)
-		temp = ~temp + 1;
+		temp = -temp;
+	int exp;
 	{
-		size_t i;
-
-		i = 30;
+		size_t i = 30;
 		while (i && !(temp >> i & 1))
 			i--;
-		if (23 < i)
-			temp = temp >> (i - 23);
-		else
-			temp = temp << (23 - i);
-		temp &= -1u >> (32 - 23);
+		temp = 23 < i ? temp >> (i - 23): temp << (23 - i);
+		temp &= (1 << 23) - 1;
 		exp = 0x7F - _fixed_point + i;
 	}
 	temp |= (exp & 0xFF) << 23;
 	if (isnegative)
 		temp |= 1 << 31;
-	return *(float *)&temp;
+	return reinterpret_cast<float &>(temp);
 }
 
 std::ostream &operator<<(std::ostream &out, const Fixed &value)
