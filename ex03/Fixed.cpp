@@ -27,7 +27,7 @@ Fixed::Fixed(const float value)
 	int result = 0;
 	bool isnegative = value < 0;
 	int exp = temp >> 23 & 0xFF;
-	if (exp == 0x0 && !(temp & ((1 << 22) - 1)))
+	if (exp == 0x0 && !(temp & ((1 << 23) - 1)))
 	{
 		_raw = 0;
 		return;
