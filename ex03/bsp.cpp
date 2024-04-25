@@ -6,18 +6,18 @@
 /*   By: hshimizu <hshimizu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 05:54:57 by hshimizu          #+#    #+#             */
-/*   Updated: 2024/04/23 20:33:07 by hshimizu         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:31:02 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Fixed.hpp"
 #include "Point.hpp"
 
-bool bsp(Point const a, Point const b, Point const c, Point const point)
-{
-	Point ab(b - a), bc(c - b), ca(a - c);
-	Point ap(point - a), bp(point - b), cp(point - c);
-	Fixed p[] = {ca * ap, ab * bp, bc * cp};
+bool bsp(Point const a, Point const b, Point const c, Point const point) {
+  Point ab(b - a), bc(c - b), ca(a - c);
+  Point ap(point - a), bp(point - b), cp(point - c);
+  Fixed p[] = {ca * ap, ab * bp, bc * cp};
 
-	return (p[0] >= 0 && p[1] >= 0 && p[2] >= 0) || (p[0] <= 0 && p[1] <= 0 && p[2] <= 0);
+  return (p[0] >= 0 && p[1] >= 0 && p[2] >= 0) ||
+         (p[0] <= 0 && p[1] <= 0 && p[2] <= 0);
 }

@@ -6,12 +6,13 @@
 /*   By: hshimizu <hshimizu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 05:43:18 by hshimizu          #+#    #+#             */
-/*   Updated: 2024/04/23 20:32:50 by hshimizu         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:31:16 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Fixed.hpp"
 #include "Point.hpp"
+
+#include "Fixed.hpp"
 
 Point::Point(void) {}
 
@@ -23,22 +24,16 @@ Point::Point(const Point &point) : _x(point._x), _y(point._y) {}
 
 Point::~Point(void) {}
 
-Point Point::operator=(const Point &point)
-{
-	return (point);
+Point Point::operator=(const Point &point) { return (point); }
+
+Point Point::operator+(const Point &point) const {
+  return Point(_x + point._x, _y + point._y);
 }
 
-Point Point::operator+(const Point &point) const
-{
-	return Point(_x + point._x, _y + point._y);
+Point Point::operator-(const Point &point) const {
+  return Point(_x - point._x, _y - point._y);
 }
 
-Point Point::operator-(const Point &point) const
-{
-	return Point(_x - point._x, _y - point._y);
-}
-
-Fixed Point::operator*(const Point &point) const
-{
-	return _x * point._y - _y * point._x;
+Fixed Point::operator*(const Point &point) const {
+  return _x * point._y - _y * point._x;
 }
